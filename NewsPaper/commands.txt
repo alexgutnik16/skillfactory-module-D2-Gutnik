@@ -1,0 +1,66 @@
+from news.models import *
+
+u1 = User.objects.create_user('Tom')
+u2 = User.objects.create_user('Alex')
+
+a1 = Author.objects.create(author_user=u1)
+a2 = Author.objects.create(author_user=u2)
+
+sp = Category.objects.create(category_name='sport')
+it = Category.objects.create(category_name='IT')
+mu = Category.objects.create(category_name='music')
+sc = Category.objects.create(category_name='science')
+
+ar1 = Post.objects.create(author=a1, post_type='AR', heading='Hello', text='Some text about sport and science')
+ar2 = Post.objects.create(author=a2, post_type='AR', heading='Hello', text='Some text about science and music')
+nw1 = Post.objects.create(author=a1, post_type='NW', heading='Hello World!', text='Some text about IT and sport')
+
+ar1.post_category.add(sp)
+ar1.post_category.add(sc)
+ar2.post_category.add(sc)
+ar2.post_category.add(mu)
+nw1.post_category.add(it)
+nw1.post_category.add(sp)
+
+com1 = Comment.objects.create(comment_text='Some comment', post_comment=ar1, user_comment=u1)
+com2 = Comment.objects.create(comment_text='Some comment', post_comment=ar2, user_comment=u2)
+com3 = Comment.objects.create(comment_text='Some comment', post_comment=nw1, user_comment=u2)
+com4 = Comment.objects.create(comment_text='Some comment', post_comment=nw1, user_comment=u1)
+
+com1.like()
+com1.like()
+com2.dislike()
+com2.dislike()
+com3.like()
+com4.like()
+ar1.like()
+ar1.dislike()
+ar2.like()
+ar2.like()
+nw1.like()
+nw1.like()
+nw1.like()
+
+a1.update_rating()
+a2.update_rating()
+
+best_rating = Author.objects.order_by('-rating_user')[:1]
+for i in best_rating:
+    i.rating_user
+    i.author_user.username
+
+best_post = Post.objects.order_by('-rating')[:1]
+for i in best_post:
+    i.creation_date
+    i.author.author_user.username
+    i.rating
+    i.heading
+    i.preview()
+
+comments = Comment.objects.all()
+for i in comments:
+    if i.post_comment == best_post[0]:
+        i.creation_date
+        i.user_comment.username
+        i.rating
+        i.comment_text
